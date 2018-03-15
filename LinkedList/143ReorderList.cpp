@@ -8,7 +8,6 @@ struct ListNode {
 };
 
 void printLinkedList(ListNode* head) {
-    cout<<"hello"<<endl;
     while(head) {
         cout<<head->val<<"->";
         head = head->next;
@@ -16,60 +15,64 @@ void printLinkedList(ListNode* head) {
     cout<<"NULL"<<endl;
 }
 
-void myReverse(ListNode* head){
-    ListNode* prev = NULL;
-    while(head!=NULL){
-        ListNode* tmp = head->next;
-        head->next = prev;
-        //move head and prev pointer one step forward
-        prev = head;
-        head = tmp;
 
+
+
+
+ListNode* myReverse(ListNode* head){
+    ListNode* prev = NULL;
+    ListNode* curr = head;
+    ListNode* nextNode = NULL;
+
+    while(curr){
+        nextNode = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = nextNode;
     }
+    return prev;
 }
 
 
 
 
 void myMerge(ListNode* l1, ListNode* l2){
-    ListNode* l1_curr = l1;
-    ListNode* l2_curr = l2;
-    ListNode* l1_next = NULL;
-    ListNode* l2_next = NULL;
-
-    while(l1_curr && l2_curr){
-        //save the next pointers
-        l1_next = l1_curr->next;
-        l2_next = l2_curr->next;
-        //make l2_curr as next of l1
-        l2_curr->next = l1_next;
-        l1_curr->next = l2;
-        //update curren pointers for next iteration
-        l1_curr = l1_next;
-        l2_curr = l2_next;
+    while(l1){
+        ListNode* n1 = l1->next;
+        ListNode* n2 = l2->next;
+        l1->next = l2;
+        if(!n1){
+            break;
+        }
+        l2->next = n1;
+        l1 = n1;
+        l2 = n2;
     }
 }
-
 
 
 void reorderList(ListNode* head) {
-    if (head==NULL || head->next==NULL || head->next->next == NULL){
+    if (head==NULL || head->next==NULL){
         return;
     }
+
+    ListNode* prev = NULL;
     ListNode* slow = head;
     ListNode* fast = head;
     ListNode* l1 = head;
-    ListNode* l2 = head;
-    ListNode* mid = l1->next;
+
     while(fast && fast->next){
-        mid = slow;
+        prev = slow;
         slow = slow->next;
         fast = fast->next->next;
     }
-    mid->next = NULL;
-    myReverse(l2);
-    myMerge(l1,l2);
+    prev->next = NULL;
+    ListNode* l2 = myReverse(slow);
+    myMerge(l1, l2);
+    printLinkedList(l1);
 }
+
+
 
 int main() {
     cout<<"main"<<endl;
@@ -81,7 +84,7 @@ int main() {
     node1.next = &node2;
     node2.next = &node3;
     node3.next = &node4;
-    printLinkedList(&node1);
-
+    // printLinkedList(&node1);
+    reorderList(&node1);
     return 0;
 }
